@@ -4,7 +4,6 @@ use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
-use Monolog\Formatter\JsonFormatter;
 
 return [
 
@@ -55,8 +54,8 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['stderr'],
-            'ignore_exceptions' => true,
+            'channels' => explode(',', env('LOG_STACK', 'single')),
+            'ignore_exceptions' => false,
         ],
 
         'single' => [
@@ -99,7 +98,7 @@ return [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER', JsonFormatter::class),
+            'formatter' => env('LOG_STDERR_FORMATTER'),
             'with' => [
                 'stream' => 'php://stderr',
             ],
@@ -125,7 +124,7 @@ return [
         ],
 
         'emergency' => [
-            'path' => 'php://stderr',
+            'path' => storage_path('logs/laravel.log'),
         ],
 
     ],
